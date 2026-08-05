@@ -1,87 +1,23 @@
-const express = require('express')
+const express = require("express");
 
-const route = express.Router()
+const router = express.Router();
 
-const students = [{
-        id: 1,
-        name: 'Jamie'
-    },
-    {
-        id: 2,
-        name:'Peter'
-    }]
-route.get('/',(req,res) =>{
-    res.json(students)
-})
+const {
+    getStudents,
+    getStudentById,
+    createStudent,
+    updateStudent,
+    deleteStudent
+} = require("../controllers/studentController");
 
-route.get("/:id", (req, res) => {
-    const studentId = parseInt(req.params.id);
+router.get("/", getStudents);
 
-    const student = students.find(student => student.id === studentId);
+router.get("/:id", getStudentById);
 
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
+router.post("/", createStudent);
 
-    res.json(student);
-});
+router.put("/:id", updateStudent);
 
-route.post("/",(req,res) =>{
-   
-    if(!req.body.name){
-        return res.status(400).json({
-            message : "Please enter a student name"
-        })
-    }
-   
-    const student = {
-        id : students.length + 1,
-        name: req.body.name
-    }
-    students.push(student)
-    res.status(201).json(student);
-})
+router.delete("/:id", deleteStudent);
 
-
-route.put("/:id",(req,res) =>{
-    const studentId = parseInt(req.params.id);
-
-    const student = students.find(student => student.id === studentId);
-
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
-
-    if(!req.body.name){
-        return res.status(400).json({
-            message : "Please enter a student name"
-        })
-    }
-
-    student.name = req.body.name;
-    res.status(200).json(student);
-})
-
-
-route.delete("/:id",(req,res) =>{
-    const studentId = parseInt(req.params.id);
-
-    const student = students.find(student => student.id === studentId);
-
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
-
-    const index = students.indexOf(student)
-    students.splice(index,1)
-
-    res.status(200).json(student)
-})
-
-module.exports = route
+module.exports = router;
