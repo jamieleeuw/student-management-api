@@ -1,13 +1,19 @@
 const express = require('express')
-
 const app = express()
+const methodLogger = require('./middlewares/logger')
+const studentRouter = require('./routes/studentRoutes')
+require('dotenv').config()
 
+app.use(methodLogger)
+
+const PORT = process.env.PORT || 8800
 app.get('/',(req,res) =>{
     res.send('Hello world')
 })
 
-const studentRouter = require('./routes/studentRoutes')
-
 app.use('/students',studentRouter)
 
-app.listen(8800)
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+})
