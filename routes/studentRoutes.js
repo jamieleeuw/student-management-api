@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { validateStudent, validateStudentId } = require('../middlewares/validateStudent');
 const router = express.Router();
 
 const {
@@ -12,12 +12,12 @@ const {
 
 router.get("/", getStudents);
 
-router.get("/:id", getStudentById);
+router.get("/:id",validateStudentId, getStudentById);
 
-router.post("/", createStudent);
+router.post("/",validateStudent, createStudent);
 
-router.put("/:id", updateStudent);
+router.put("/:id",validateStudentId,validateStudent,updateStudent);
 
-router.delete("/:id", deleteStudent);
+router.delete("/:id",validateStudentId, deleteStudent);
 
 module.exports = router;
