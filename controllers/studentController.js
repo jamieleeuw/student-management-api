@@ -1,90 +1,156 @@
-const students = [
-    {
-        id: 1,
-        name: "Jamie"
-    },
-    {
-        id: 2,
-        name: "Peter"
-    }
-];
 
+const con = require('../config/db')
+
+
+// fetch all students
 const getStudents = (req, res) => {
-    res.json(students);
+    const fetch_query = "SELECT * FROM students";
+
+    con.query(fetch_query, (err, result) => {
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
+        }
+
+        res.status(200).json(result.rows);
+    });
 };
 
+// fetch a student by its ID
 const getStudentById = (req, res) => {
     const studentId = parseInt(req.params.id);
+    const fetch_query = "SELECT * FROM students WHERE studentid = $1";
 
-    const student = students.find(student => student.id === studentId);
+    con.query(fetch_query, [studentId], (err, result) => {
 
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
+        if (err) {
+            return res.status(500).json({
+                message: "Database error"
+            });
+        }
 
-    res.json(student);
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
+
+        res.status(200).json(result.rows[0]);
+    });
 };
-
+//Create a new Student
 const createStudent = (req, res) => {
 
-    if (!req.body.name) {
-        return res.status(400).json({
-            message: "Please enter a student name"
-        });
-    }
+     const {
+        first_name,
+        last_name,
+        date_of_birth,
+        gender,
+        email
+    } = req.body;
 
-    const student = {
-        id: students.length + 1,
-        name: req.body.name
-    };
+    const insert_query = 'INSERT INTO students (first_name,last_name,date_of_birth,gender,email) VALUES($1,$2,$3,$4,$5) RETURNING *'
+   con.query(insert_query,[first_name,
+        last_name,
+        date_of_birth,
+        gender,
+        email],(err,result)=>{
+            if(err){
 
-    students.push(student);
-
-    res.status(201).json(student);
+                 return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
+            
+            res.status(201).json({
+                message: "Student created successfully",
+                student: result.rows[0]
+            });
+        })
 };
 
+// Update student information
 const updateStudent = (req, res) => {
-
     const studentId = parseInt(req.params.id);
 
-    const student = students.find(student => student.id === studentId);
+    const {
+        first_name,
+        last_name,
+        date_of_birth,
+        gender,
+        email
+    } = req.body;
 
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
+    const update_query = `
+        UPDATE students
+        SET first_name = $1,
+            last_name = $2,
+            date_of_birth = $3,
+            gender = $4,
+            email = $5
+        WHERE studentid = $6
+    `;
 
-    if (!req.body.name) {
-        return res.status(400).json({
-            message: "Please enter a student name"
-        });
-    }
+    con.query(
+        update_query,
+        [
+            first_name,
+            last_name,
+            date_of_birth,
+            gender,
+            email,
+            studentId
+        ],
+        (err, result) => {
 
-    student.name = req.body.name;
+            if (err) {
+                return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
 
-    res.status(200).json(student);
+            if (result.rowCount === 0) {
+                return res.status(404).json({
+                    message: "Student not found"
+                });
+            }
+
+            res.status(200).json({
+                message: "Student updated successfully"
+            });
+        }
+    );
 };
 
+//Delete student from table
 const deleteStudent = (req, res) => {
 
     const studentId = parseInt(req.params.id);
 
-    const student = students.find(student => student.id === studentId);
+    const deleteQuery = 'Delete from students where studentid = $1'
 
-    if (!student) {
-        return res.status(404).json({
-            message: "Student not found"
-        });
-    }
+    con.query(deleteQuery,[studentId],(err,result)=>{
+        if (err) {
+                return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
 
-    const index = students.indexOf(student);
+            if (result.rowCount === 0) {
+                return res.status(404).json({
+                    message: "Student not found"
+                });
+            }
 
-    students.splice(index, 1);
-
-    res.status(200).json(student);
+            res.status(200).json({
+                message: "Student deleted successfully"
+            });
+    })
 };
 
 module.exports = {
