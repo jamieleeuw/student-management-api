@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('joi')
 
 const Studentschema = Joi.object({
     first_name: Joi.string().min(1).max(50).required(),
@@ -6,37 +6,37 @@ const Studentschema = Joi.object({
     date_of_birth: Joi.date().required(),
     gender: Joi.string().valid("Male", "Female").required(),
     email: Joi.string().max(254).email()
-});
+})
 
 const idSchema = Joi.object({
     id: Joi.number().integer().positive().required()
-});
+})
 
 const validateStudent = (req, res, next) => {
 
-    const { error } = Studentschema.validate(req.body);
+    const { error } = Studentschema.validate(req.body)
 
     if (error) {
         return res.status(400).json({
             message: "Validation failed",
             errors: error.details
-        });
+        })
     }
 
-    next();
-};
+    next()
+}
 
 const validateStudentId = (req, res, next) => {
-    const { error } = idSchema.validate(req.params);
+    const { error } = idSchema.validate(req.params)
 
     if (error) {
         return res.status(400).json({
             message: "Invalid student ID",
             errors: error.details
-        });
+        })
     }
 
-    next();
-};
+    next()
+}
 
-module.exports = {validateStudent,validateStudentId};
+module.exports = {validateStudent,validateStudentId}

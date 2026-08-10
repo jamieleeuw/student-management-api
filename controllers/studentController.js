@@ -4,21 +4,21 @@ const con = require('../config/db')
 
 // fetch all students
 const getStudents = (req, res,next) => {
-    const fetch_query = "SELECT * FROM students";
+    const fetch_query = "SELECT * FROM students"
 
     con.query(fetch_query, (err, result) => {
         if (err) {
             return next(err)
         }
 
-        res.status(200).json(result.rows);
-    });
-};
+        res.status(200).json(result.rows)
+    })
+}
 
 // fetch a student by its ID
 const getStudentById = (req, res,next) => {
-    const studentId = parseInt(req.params.id);
-    const fetch_query = "SELECT * FROM students WHERE studentid = $1";
+    const studentId = parseInt(req.params.id)
+    const fetch_query = "SELECT * FROM students WHERE studentid = $1"
 
     con.query(fetch_query, [studentId], (err, result) => {
 
@@ -32,9 +32,9 @@ const getStudentById = (req, res,next) => {
             });
         }
 
-        res.status(200).json(result.rows[0]);
-    });
-};
+        res.status(200).json(result.rows[0])
+    })
+}
 //Create a new Student
 const createStudent = (req, res,next) => {
 
@@ -44,7 +44,7 @@ const createStudent = (req, res,next) => {
         date_of_birth,
         gender,
         email
-    } = req.body;
+    } = req.body
 
     const insert_query = 'INSERT INTO students (first_name,last_name,date_of_birth,gender,email) VALUES($1,$2,$3,$4,$5) RETURNING *'
    con.query(insert_query,[first_name,
@@ -59,13 +59,13 @@ const createStudent = (req, res,next) => {
             res.status(201).json({
                 message: "Student created successfully",
                 student: result.rows[0]
-            });
+            })
         })
-};
+}
 
 // Update student information
 const updateStudent = (req, res,next) => {
-    const studentId = parseInt(req.params.id);
+    const studentId = parseInt(req.params.id)
 
     const {
         first_name,
@@ -73,7 +73,7 @@ const updateStudent = (req, res,next) => {
         date_of_birth,
         gender,
         email
-    } = req.body;
+    } = req.body
 
     const update_query = `
         UPDATE students
@@ -83,7 +83,7 @@ const updateStudent = (req, res,next) => {
             gender = $4,
             email = $5
         WHERE studentid = $6
-    `;
+    `
 
     con.query(
         update_query,
@@ -104,20 +104,20 @@ const updateStudent = (req, res,next) => {
             if (result.rowCount === 0) {
                 return res.status(404).json({
                     message: "Student not found"
-                });
+                })
             }
 
             res.status(200).json({
                 message: "Student updated successfully"
-            });
+            })
         }
-    );
-};
+    )
+}
 
 //Delete student from table
 const deleteStudent = (req, res,next) => {
 
-    const studentId = parseInt(req.params.id);
+    const studentId = parseInt(req.params.id)
 
     const deleteQuery = 'Delete from students where studentid = $1'
 
@@ -129,14 +129,14 @@ const deleteStudent = (req, res,next) => {
             if (result.rowCount === 0) {
                 return res.status(404).json({
                     message: "Student not found"
-                });
+                })
             }
 
             res.status(200).json({
                 message: "Student deleted successfully"
-            });
+            })
     })
-};
+}
 
 module.exports = {
     getStudents,
@@ -144,4 +144,4 @@ module.exports = {
     createStudent,
     updateStudent,
     deleteStudent
-};
+}

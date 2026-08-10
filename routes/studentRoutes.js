@@ -1,6 +1,6 @@
-const express = require("express");
-const { validateStudent, validateStudentId } = require('../middlewares/validateStudent');
-const router = express.Router();
+const express = require("express")
+const { validateStudent, validateStudentId } = require('../middlewares/validateStudent')
+const router = express.Router()
 
 const {
     getStudents,
@@ -8,16 +8,16 @@ const {
     createStudent,
     updateStudent,
     deleteStudent
-} = require("../controllers/studentController");
+} = require("../controllers/studentController")
 
-router.get("/", getStudents);
+router.get("/", getStudents)
 
-router.get("/:id",validateStudentId, getStudentById);
+router.get("/:id",validateStudentId, getStudentById)
 
-router.post("/",validateStudent, createStudent);
+router.post("/",validateStudent, createStudent)
 
-router.put("/:id",validateStudentId,validateStudent,updateStudent);
+router.put("/:id",validateStudentId,validateStudent,updateStudent)
 
-router.delete("/:id",validateStudentId, deleteStudent);
+router.delete("/:id",validateStudentId, deleteStudent)
 
-module.exports = router;
+module.exports = router

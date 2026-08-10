@@ -1,9 +1,9 @@
 const express = require('express')
 const app = express()
-app.use(express.json());
+app.use(express.json())
 const methodLogger = require('./middlewares/logger')
 const studentRouter = require('./routes/studentRoutes')
-const errorHandler = require('./middlewares/errorHandler');
+const errorHandler = require('./middlewares/errorHandler')
 
 require('dotenv').config()
 
@@ -16,7 +16,7 @@ app.get('/',(req,res) =>{
 
 app.use('/students',studentRouter)
 
-app.use(errorHandler);
+app.use(errorHandler)
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
