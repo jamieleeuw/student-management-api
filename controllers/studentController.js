@@ -3,15 +3,12 @@ const con = require('../config/db')
 
 
 // fetch all students
-const getStudents = (req, res) => {
+const getStudents = (req, res,next) => {
     const fetch_query = "SELECT * FROM students";
 
     con.query(fetch_query, (err, result) => {
         if (err) {
-            return res.status(500).json({
-                message: "Database error",
-                error: err.message
-            });
+            return next(err)
         }
 
         res.status(200).json(result.rows);
@@ -19,16 +16,14 @@ const getStudents = (req, res) => {
 };
 
 // fetch a student by its ID
-const getStudentById = (req, res) => {
+const getStudentById = (req, res,next) => {
     const studentId = parseInt(req.params.id);
     const fetch_query = "SELECT * FROM students WHERE studentid = $1";
 
     con.query(fetch_query, [studentId], (err, result) => {
 
         if (err) {
-            return res.status(500).json({
-                message: "Database error"
-            });
+            return next(err)
         }
 
         if (result.rows.length === 0) {
@@ -41,7 +36,7 @@ const getStudentById = (req, res) => {
     });
 };
 //Create a new Student
-const createStudent = (req, res) => {
+const createStudent = (req, res,next) => {
 
      const {
         first_name,
@@ -58,11 +53,7 @@ const createStudent = (req, res) => {
         gender,
         email],(err,result)=>{
             if(err){
-
-                 return res.status(500).json({
-                    message: "Database error",
-                    error: err.message
-                });
+                 return next(err)
             }
             
             res.status(201).json({
@@ -73,7 +64,7 @@ const createStudent = (req, res) => {
 };
 
 // Update student information
-const updateStudent = (req, res) => {
+const updateStudent = (req, res,next) => {
     const studentId = parseInt(req.params.id);
 
     const {
@@ -107,10 +98,7 @@ const updateStudent = (req, res) => {
         (err, result) => {
 
             if (err) {
-                return res.status(500).json({
-                    message: "Database error",
-                    error: err.message
-                });
+                return next(err)
             }
 
             if (result.rowCount === 0) {
@@ -127,7 +115,7 @@ const updateStudent = (req, res) => {
 };
 
 //Delete student from table
-const deleteStudent = (req, res) => {
+const deleteStudent = (req, res,next) => {
 
     const studentId = parseInt(req.params.id);
 
@@ -135,10 +123,7 @@ const deleteStudent = (req, res) => {
 
     con.query(deleteQuery,[studentId],(err,result)=>{
         if (err) {
-                return res.status(500).json({
-                    message: "Database error",
-                    error: err.message
-                });
+                return next(err)
             }
 
             if (result.rowCount === 0) {
